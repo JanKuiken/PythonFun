@@ -1,2 +1,2 @@
 # PythonFun
-Miscellaneous Python scripts,just for fun
+Miscellaneous Python scripts, just for fun
