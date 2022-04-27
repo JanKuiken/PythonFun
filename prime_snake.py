@@ -1,6 +1,7 @@
 """
 see: https://puzzling.stackexchange.com/questions/93030/prime-number-snake
 """
+import time
 
 def primes_less_or_equal(n):
     l = [True] * (n + 1)
@@ -29,11 +30,13 @@ PRIME_POSITIONS = [ # values from problem definition
                     (8,0), (8,4),
                     (9,3), (9,5)
                   ]
-SHOW_PROGRESS_TRIES = 100000 # ....,a lot
+SHOW_PROGRESS_TRIES = 5000
 
 # globals
 board = None
 tries = 0
+best_so_far = 0
+str_solutions = set()
 
 def on_board(i,j):
     return i >= 0 and i < N and j >= 0 and j < N
@@ -55,18 +58,24 @@ def create_board():
             }
     return board
 
-def print_board():
+def stringify_board():
     global board
-    print(" +----------------------------------------------------+")    
+
+    result = "\n +----------------------------------------------------+\n"    
     for i in range(N):
-        print(" | ", end='')
+        result += " | "
         for j in range(N):
             prime = "*" if board[(i,j)]["should_be_prime"] else " "
             number = board[(i,j)]["occupies"]
             number = f"{number:3}" if number else "   "
-            print(f'{number}{prime} ', end='')
-        print(" | ")
-    print(" +----------------------------------------------------+")    
+            result += f"{number}{prime} "
+        result += " | \n"
+    result += " +----------------------------------------------------+\n\n"
+    
+    return result
+
+def print_board():
+    print(stringify_board())
 
 
 def free_space_at(free,i,j):
@@ -87,20 +96,22 @@ def enough_space_for_the_tail(number, i, j):
 
 
 def try_it(number, i, j):
-    global board, tries
+    global board, tries, best_so_far, str_solutions
     tries += 1
     
-    # show some progress
+    # print some progres
+    best_so_far = max(best_so_far, number)
     if (tries % SHOW_PROGRESS_TRIES) == 0:
-        print(tries, number)
-        print_board()
-    
+        print(tries, number, best_so_far, end="\r")
+
+    # check for succes, if number equals 101, the previous 100 are oke!    
     if number == 101:
         # Hurray, we are finished, return succes
         print("Hurray")
         print(tries, number)
         print_board()
-        return True
+        str_solutions.add(stringify_board())
+        return False # return True to stop at the first found solutioon
     
     # check if this is a valid move
     if board[(i,j)]["occupies"]:
@@ -128,12 +139,23 @@ def try_it(number, i, j):
 
 
 def main():
-    global board
+    global board, str_solutions
+    
+    start_time = int(time.time())
+    
     board = create_board()
     for i in range(N):
         for j in range(N):
             try_it(1, i, j)
 
-main()
+    end_time = int(time.time())
+            
+    print("\n\n=========================================\n\n")
+    for sol in str_solutions:
+        print(sol)
+    print("Number of solutions: ", len(str_solutions))
+    print("Computation time (seconds): ", str(end_time - start_time))
 
+if __name__ == "__main__":
+    main()
 
