@@ -153,7 +153,8 @@ def main():
     print("\n\n=========================================\n\n")
     for sol in str_solutions:
         print(sol)
-    print("Number of solutions: ", len(str_solutions))
+    print("Number of solutions       : ", len(str_solutions))
+    print("Number of tries           : ", len(str_solutions))
     print("Computation time (seconds): ", str(end_time - start_time))
 
 if __name__ == "__main__":
