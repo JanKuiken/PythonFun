@@ -14,8 +14,9 @@ def primes_less_or_equal(n):
     return retval
 
 # constants
-N = 10
-PRIMES_BELOW_101 = primes_less_or_equal(100)
+N  = 10
+N2 = N * N
+PRIMES_BELOW_N2 = primes_less_or_equal(N2)
 PRIME_POSITIONS = [ # values from problem definition 
                     (0,2), 
                     (1,1), (1,7), (1,9), 
@@ -28,7 +29,7 @@ PRIME_POSITIONS = [ # values from problem definition
                     (8,0), (8,4),
                     (9,3), (9,5)
                   ]
-SHOW_PROGRESS_TRIES = 10000000 # ....,a lot
+SHOW_PROGRESS_TRIES = 100000 # ....,a lot
 
 # globals
 board = None
@@ -68,6 +69,23 @@ def print_board():
     print(" +----------------------------------------------------+")    
 
 
+def free_space_at(free,i,j):
+    if not (i,j) in free:
+        return 0
+    else:
+        free.remove((i,j))
+        return ( 1 + free_space_at(free, i-1,j  )
+                   + free_space_at(free, i+1,j  )
+                   + free_space_at(free, i  ,j-1)
+                   + free_space_at(free, i  ,j+1) )
+
+def enough_space_for_the_tail(number, i, j):
+    global board
+    free = [key for key, item in board.items() if not item['occupies']]
+    n = free_space_at(free,i,j)
+    return (101 - number) <= n
+
+
 def try_it(number, i, j):
     global board, tries
     tries += 1
@@ -88,7 +106,10 @@ def try_it(number, i, j):
     if board[(i,j)]["occupies"]:
         return False
     
-    if (number in PRIMES_BELOW_101) != board[(i,j)]["should_be_prime"]:
+    if (number in PRIMES_BELOW_N2) != board[(i,j)]["should_be_prime"]:
+        return False
+    
+    if not enough_space_for_the_tail(number, i, j):
         return False
         
     # let's make our move, ...
@@ -112,5 +133,7 @@ def main():
     for i in range(N):
         for j in range(N):
             try_it(1, i, j)
+
+main()
 
 
