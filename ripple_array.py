@@ -40,8 +40,9 @@ def estimate_some_params():
     plt.figure()
     plt.plot(t,a)
     plt.show()
+    plt.savefig('used_pulse.png')
 
-# estimate_some_params()
+estimate_some_params()
 
 
 def create_wave_field(dist_mat, t, delay):
@@ -95,9 +96,4 @@ plt.axis('off')
 plt.tight_layout()
 plt.savefig('ripple_array_sample_2.png')
 plt.show()
-
-
-
-
-
 
